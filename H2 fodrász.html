@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>H2 – Követelmény-analízis | IdőMester – Fodrász Szalon</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    :root{
+      --bg: #faf7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #e11d48;
+      --primary-weak: #fde2e7;
+      --accent: #f59e0b;
+      --border: #e7e2ea;
+      --radius-xl: 18px;
+      --radius: 14px;
+      --shadow: 0 18px 45px rgba(17,24,39,.08);
+      --shadow-soft: 0 12px 22px rgba(17,24,39,.04);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg: #0b0f14;
+        --card: #0e131b;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --primary: #fb7185;
+        --primary-weak: #331621;
+        --accent: #fbbf24;
+        --border: #1f2937;
+        --shadow: 0 18px 45px rgba(0,0,0,.45);
+        --shadow-soft: 0 12px 22px rgba(0,0,0,.35);
+      }
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0; padding:2.6rem 1.2rem 3.2rem;
+      background: radial-gradient(1200px 800px at 10% -10%, rgba(255,255,255,.8), transparent 60%),
+                  radial-gradient(900px 700px at 120% 0%, color-mix(in srgb, var(--primary-weak) 45%, transparent), transparent 70%),
+                  var(--bg);
+      color: var(--text);
+      font: 16px/1.7 "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+    }
+    .container{max-width: 1024px; margin:0 auto;}
+
+    /* ====== FELSŐ NAV – egységes az index/H1 oldalakkal ====== */
+    nav.top{
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: saturate(160%) blur(8px);
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--border);
+      margin: -2.2rem -1.2rem 1.4rem;
+      padding: .6rem 1.2rem;
+    }
+    .top .row{display:flex; align-items:center; gap:1rem; justify-content:space-between}
+    .brand{display:flex; align-items:center; gap:.7rem; font-weight:800}
+    .logo{
+      width:40px; height:40px; border-radius:12px; isolation:isolate;
+      background: conic-gradient(from 220deg, var(--primary), #a21caf, var(--accent));
+      display:grid; place-items:center; color:#fff; box-shadow: 0 12px 22px rgba(225,29,72,.28);
+      position:relative; font-size:1.1rem;
+    }
+    .logo::after{content:"✂"; filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+    .top ul{list-style:none; display:flex; gap:.6rem; padding:0; margin:0; flex-wrap:wrap}
+    .top a.btn{
+      display:inline-block; padding:.42rem .7rem; border-radius:999px;
+      text-decoration:none; color:var(--text); border:1px solid var(--border);
+      background: var(--card); box-shadow: var(--shadow-soft);
+      font-size:.92rem;
+    }
+    .top a.btn:hover{transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.07)}
+
+    /* ====== HŐS / FEJLÉC ====== */
+    header.hero{
+      display:flex; gap:1.25rem; align-items:center;
+      padding:1.4rem; border:1px solid var(--border);
+      border-radius: var(--radius-xl); background: var(--card);
+      box-shadow: var(--shadow); margin-bottom:1.2rem;
+    }
+    .emblem{
+      width:68px; height:68px; border-radius:20px;
+      background: conic-gradient(from 220deg, var(--primary), #a21caf, var(--accent));
+      display:grid; place-items:center; color:#fff; font-weight:800;
+      box-shadow: 0 18px 28px rgba(225,29,72,.28);
+      position: relative;
+    }
+    .emblem::after{content:"H2"; font-variant-numeric: tabular-nums;}
+    .subtitle{color:var(--muted); margin:.2rem 0 0}
+    .meta{display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:.6rem .9rem; margin-top:.6rem; font-size:.95rem;}
+    .meta b{color:var(--muted); font-weight:600; display:block}
+
+    /* ====== TARTALOMJEGYZÉK (oldal belső navigáció) ====== */
+    nav.toc{
+      position: sticky; top: 0; z-index: 5;
+      backdrop-filter: saturate(160%) blur(8px);
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      border-bottom: 1px solid var(--border);
+      margin: -2.2rem -1.2rem 1.4rem;
+      padding: .6rem 1.2rem;
+    }
+    .toc ul{list-style:none; display:flex; gap:.6rem; padding:0; margin:0; flex-wrap:wrap}
+    .toc a{
+      display:inline-block; padding:.42rem .7rem; border-radius:999px;
+      text-decoration:none; color:var(--text); border:1px solid var(--border);
+      background: var(--card); box-shadow: var(--shadow-soft);
+      font-size:.92rem;
+    }
+
+    /* ====== KÁRTYÁK / SZEKCIÓK ====== */
+    section.card, footer.card{
+      padding:1.2rem 1.2rem; border:1px solid var(--border);
+      border-radius: var(--radius); background: var(--card);
+      box-shadow: var(--shadow-soft); margin:1rem 0 1.1rem;
+    }
+    section.card h2{
+      font-size:1.15rem; margin:.1rem 0 .85rem; display:flex; align-items:center; gap:.55rem;
+    }
+    section.card h2::before{
+      content:""; width:10px; height:22px; border-radius:6px;
+      background: linear-gradient(180deg, var(--primary), color-mix(in srgb, var(--primary) 45%, var(--accent)));
+    }
+    h3{margin:.2rem 0 .4rem; font-size:1.02rem}
+    p{margin:.35rem 0 .8rem}
+    ul{margin:.2rem 0 .8rem; padding-left:1.15rem}
+
+    /* ====== TÁBLÁZATOK ====== */
+    table{
+      width:100%; border-collapse: collapse; overflow:hidden;
+      border:1px solid var(--border); border-radius: 14px; background: var(--card);
+    }
+    thead th{
+      font-size:.9rem; text-transform:uppercase; letter-spacing:.04em;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--primary-weak) 72%, var(--card)), var(--card));
+      color: var(--text);
+    }
+    th, td{ padding:.8rem .85rem; border-bottom:1px solid var(--border); vertical-align:top}
+    tbody tr:nth-child(odd){ background: color-mix(in srgb, var(--card) 92%, var(--bg))}
+
+    .note{
+      background: color-mix(in srgb, var(--primary-weak) 80%, #fff);
+      border:1px dashed color-mix(in srgb, var(--primary) 40%, var(--border));
+      padding:.85rem 1rem; border-radius:12px; font-size:.96rem;
+    }
+    .muted{color:var(--muted)}
+
+    @media (max-width:900px){ .meta{grid-template-columns: repeat(2,minmax(0,1fr));} }
+
+    @media print{
+      body{background:#fff; padding:0}
+      nav.top, nav.toc{display:none}
+      header.hero, section.card, footer.card{box-shadow:none; border-color:#cfcfd4}
+      a[href]::after{content:" (" attr(href) ")"; font-size:10px; color:#666}
+      section.card{break-inside: avoid; page-break-inside: avoid}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Felső navigáció – egységes az index/H1 oldalakkal -->
+    <nav class="top" aria-label="Felső navigáció">
+      <div class="row">
+        <div class="brand"><span class="logo" aria-hidden="true"></span> Szoftvertech · IdőMester</div>
+        <ul>
+          <li><a class="btn" href="index.html">← Vissza az indexre</a></li>
+          <li><a class="btn" href="H1 fodrász.html">H1</a></li>
+          <li><a class="btn" href="H2 fodrász.html">H2</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Belső tartalomjegyzék -->
+    <nav class="toc" aria-label="Tartalomjegyzék">
+      <ul>
+        <li><a href="#leadando">Összefoglaló</a></li>
+        <li><a href="#vizio">Vízió dokumentum</a></li>
+        <li><a href="#projektterv">Projektterv</a></li>
+        <li><a href="#munkanaplo">Munkanapló</a></li>
+      </ul>
+    </nav>
+
+    <!-- Fejléc -->
+    <header class="hero">
+      <div class="emblem" aria-hidden="true"></div>
+      <div>
+        <h1>H2 – Követelmény-analízis leadandó</h1>
+        <p class="subtitle">IdőMester — Fodrász Szalon Időpontfoglaló (Python)</p>
+        <div class="meta">
+          <div><b>Csapat neve</b> SoloDev</div>
+          <div><b>Tantárgy</b> (Szoftver Technologia)</div>
+          <div><b>Dátum</b> 2025. október</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 1. Összefoglaló -->
+    <section class="card" id="leadando">
+      <h2>1. Leadandó összefoglaló</h2>
+      <p>A H2 mérföldkő három fő dokumentumból áll: (1) <strong>Vízió dokumentum</strong> – a célok, probléma, felhasználói körök, kockázatok és szótár; (2) <strong>Projektterv</strong> – mérföldkövek, erőforrások és ütemezés; (3) <strong>Munkanapló</strong> – az egyéni hozzájárulások követése.</p>
+    </section>
+
+    <!-- 2. Vízió dokumentum -->
+    <section class="card" id="vizio">
+      <h2>2. Vízió dokumentum</h2>
+
+      <h3>2.1 Címlap</h3>
+      <p><strong>Projekt címe:</strong> IdőMester — Fodrász Szalon Időpontfoglaló<br/>
+         <strong>Verzió:</strong> v0.9 (H2-tervezet)<br/>
+         <strong>Dátum:</strong> 2025.10.</p>
+
+      <h3>2.2 Bevezetés</h3>
+      <p>Az IdőMester célja egy webes foglalási rendszer létrehozása fodrászszalonok számára, amelyben a vendégek önállóan választhatnak szolgáltatást, stylistot és időpontot. Az érintettek: <em>vendégek</em> (időpontfoglalás), <em>stylistok</em> (időbeosztás kezelése), <em>szalonadmin</em> (naptár és szolgáltatáskatalógus karbantartása), valamint a <em>fejlesztő</em> (üzemeltetés, hibajavítás). A rendszer célja a telefonos egyeztetések csökkentése, az ütközések megelőzése és a foglalási folyamat átláthatóvá tétele.</p>
+
+      <h3>2.3 Probléma megfogalmazása</h3>
+      <ul>
+        <li><strong>Jelenlegi helyzet:</strong> Sok kis szalon telefonon vagy chatben egyezteti az időpontokat, ami pontatlanságokhoz és duplikált foglalásokhoz vezet.</li>
+        <li><strong>Fájdalompontok:</strong> nincs valós idejű átlátható naptár; időigényes egyeztetés; gyakori ütközések; elfelejtett visszaigazolások.</li>
+        <li><strong>Miért fontos:</strong> a hatékony időpontkezelés közvetlenül befolyásolja a bevételt, a vendégélményt és a stylistok terhelését.</li>
+      </ul>
+
+      <h3>2.4 A termék helye a piacon</h3>
+      <p>A célcsoport a <em>kis és független fodrászszalonok</em>, amelyeknek túl bonyolult vagy drága a nagy rendszerek használata. A megoldás <strong>könnyű, olcsón üzemeltethető</strong>, és a lényegre (foglalás, ütközéskezelés, alap naptár) fókuszál. Megkülönböztető érték: egyszerű bevezetés, konfigurálható szolgáltatások és nyitvatartás, valamint <em>adatportabilitás</em> (export CSV/JSON).</p>
+
+      <h3>2.5 Felhasználói környezet</h3>
+      <ul>
+        <li><strong>Felhasználói típusok:</strong> Vendég (ügyfél), Stylist (szolgáltató), Admin (szalon tulaj/vezető).</li>
+        <li><strong>Eszközök/platformok:</strong> mobil (iOS/Android böngésző), desktop böngésző; minimális követelmény: modern Chromium/Firefox/Safari.</li>
+        <li><strong>Hozzáférhetőség:</strong> mobilbarát UI, alap ARIA címkék; magyar nyelv (később bővíthető).</li>
+      </ul>
+
+      <h3>2.6 A termék előnyei</h3>
+      <ul>
+        <li><strong>Vendégeknek:</strong> 24/7 online foglalás, gyors visszaigazolás, átlátható szolgáltatás- és időpontválasztás.</li>
+        <li><strong>Szalonnak:</strong> kevesebb telefon/üzenet, jobb kapacitáskihasználás, visszamondások kezelése.</li>
+        <li><strong>Stylistoknak:</strong> rendezett beosztás, kevesebb ütközés, egyértelmű napi nézet.</li>
+      </ul>
+
+      <h3>2.7 Feltételezések és függőségek</h3>
+      <ul>
+        <li><strong>Feltételezések:</strong> stabil internetkapcsolat; valós nyitvatartás és szolgáltatáslista rendelkezésre áll; admin alap IT ismeretekkel bír.</li>
+        <li><strong>Függőségek:</strong> e-mail szolgáltató (opcionális értesítés), külső naptár-export (ICS – későbbi fázis), böngésző API-k.</li>
+      </ul>
+
+      <h3>2.8 A termék fő funkciói</h3>
+      <table>
+        <thead><tr><th>Kategória</th><th>Funkció</th><th>Leírás</th></tr></thead>
+        <tbody>
+          <tr><td>Kötelező</td><td>Foglalás létrehozása</td><td>Vendég szolgáltatás + stylist + időpont választása; ütközésmentesítés.</td></tr>
+          <tr><td>Kötelező</td><td>Naptárnézet</td><td>Admin/stylist napi/heti nézet; lista vendégeknek.</td></tr>
+          <tr><td>Kötelező</td><td>Lemondás/átfoglalás</td><td>Vendég vagy admin kezdeményezheti szabályok szerint.</td></tr>
+          <tr><td>Ajánlott</td><td>E-mail visszaigazolás</td><td>Automatikus értesítés foglalásról és módosításról.</td></tr>
+          <tr><td>Ajánlott</td><td>Szolgáltatáskatalógus</td><td>Időtartam, ár, megjegyzés; admin által szerkeszthető.</td></tr>
+          <tr><td>Jó, ha van</td><td>Stylist elérhetőség</td><td>Szabadság/egyedi idősávok kezelése.</td></tr>
+          <tr><td>Jó, ha van</td><td>Export</td><td>Foglalások exportja CSV/ICS formátumban.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.9 Minőségi elvárások (NFR)</h3>
+      <ul>
+        <li><strong>Teljesítmény:</strong> ≤300 ms API válasz egyszerű lekérdezésre fejlesztői környezetben; 20 párhuzamos kérés kezelése.</li>
+        <li><strong>Biztonság:</strong> jelszavak sózott-hash-elt tárolása; jogosultság-szintek (vendég, admin); bevitelvalidáció.</li>
+        <li><strong>Használhatóság:</strong> mobil-first felület; konzisztens elnevezések és hibaüzenetek; ARIA.</li>
+        <li><strong>Karbantarthatóság:</strong> tiszta rétegzett architektúra; tesztlefedettség cél: ≥70% a domain modulokra.</li>
+      </ul>
+
+      <h3>2.10 Kockázati lista</h3>
+      <table>
+        <thead><tr><th>Kockázat</th><th>Valószínűség</th><th>Hatás</th><th>Csökkentés</th></tr></thead>
+        <tbody>
+          <tr><td>Időütközés-kezelés hibái</td><td>Közepes</td><td>Magas</td><td>Unit tesztek edge case-ekre, integrációs tesztek; egyszerű BB szabályok.</td></tr>
+          <tr><td>Naptár időzónák</td><td>Alacsony</td><td>Közepes</td><td>UTC tárolás, lokális megjelenítés; könyvtár használat.</td></tr>
+          <tr><td>Adatvédelem</td><td>Közepes</td><td>Magas</td><td>Hash-elt jelszavak, min. adatkezelés, hozzáférés-naplózás.</td></tr>
+          <tr><td>Scope növekedés</td><td>Közepes</td><td>Közepes</td><td>MVP priorizálás, backlog fegyelem.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2.11 Szótár</h3>
+      <table>
+        <thead><tr><th>Fogalom</th><th>Definíció</th></tr></thead>
+        <tbody>
+          <tr><td>Szolgáltatás</td><td>Konkrét fodrásztevékenység (pl. hajvágás), fix időtartammal és opcionális árral.</td></tr>
+          <tr><td>Stylist</td><td>A szolgáltatást végző szakember.</td></tr>
+          <tr><td>Időablak</td><td>Foglalható idősáv a nyitvatartáson belül.</td></tr>
+          <tr><td>Foglalás</td><td>Vendég által rögzített időpont és szolgáltatás a kiválasztott stylisttal.</td></tr>
+          <tr><td>Naptárnézet</td><td>Napi/heti áttekintés admin/stylist számára.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- 3. Projektterv -->
+    <section class="card" id="projektterv">
+      <h2>3. Projektterv (H2 kivonat)</h2>
+      <h3>3.1 Csapattagok és szerepek</h3>
+      <p>Egyéni projekt. Szerepek: Fejlesztő, Tesztelő, Dokumentáció felelős.</p>
+
+      <h3>3.2 Mérföldkövek és várt eredmények</h3>
+      <table>
+        <thead><tr><th>Mérföldkő</th><th>Leszállítandó</th><th>Határidő</th></tr></thead>
+        <tbody>
+          <tr><td>H1</td><td>Projektterv</td><td>6. hét</td></tr>
+          <tr><td>H2</td><td>Vízió, frissített projektterv, munkanapló</td><td>6. hét</td></tr>
+          <tr><td>H3</td><td>SRS, Szótár, Felhasználói kézikönyv 1. verzió</td><td>6. hét</td></tr>
+          <tr><td>H4</td><td>Analízis modell, Rendszertervezés</td><td>9. hét</td></tr>
+          <tr><td>H5</td><td>Prototípus, Tesztelési terv</td><td>12. hét</td></tr>
+        </tbody>
+      </table>
+
+      <h3>3.3 Programozási nyelvek és eszközök</h3>
+      <p>Python; FastAPI/Flask; SQLite; pytest; Git + GitHub; VS Code/PyCharm.</p>
+
+      <h3>3.4 Tervezett módszerek és technikák</h3>
+      <p>Iteratív fejlesztés 1–2 hetes ciklusokkal; MVP fókusz; CI (lint + test); Docker demóhoz.</p>
+
+      <h3>3.5 Tervezett dokumentumok és idővonal</h3>
+      <p>Lásd a fenti mérföldköveket; a dokumentumok az adott hetek végére esedékesek.</p>
+
+      <h3>3.6 Tesztelési követelmények</h3>
+      <p>Egységtesztek (≥70% domain), integrációs tesztek fő végpontokra, kézi UAT tipikus folyamatokra.</p>
+
+      <h3>3.7 Bemutatás és leszállítás</h3>
+      <p>Élő demó; GitHub repó és konténeres csomag.</p>
+
+      <h3>3.8 Információs források</h3>
+      <ul>
+        <li>Python, FastAPI/Flask hivatalos dokumentációk</li>
+        <li>Git/GitHub workflow és Actions</li>
+        <li>Robert C. Martin: Clean Code (elvek)</li>
+      </ul>
+    </section>
+
+    <!-- 4. Munkanapló -->
+    <section class="card" id="munkanaplo">
+      <h2>4. Munkanapló (sablon)</h2>
+      <p class="muted">Az alábbi táblázatot heti bontásban töltsd. Iteráció/heti azonosító, időszak, feladatok és ráfordított órák.</p>
+      <table>
+        <thead><tr><th>Dátum</th><th>Tag</th><th>Feladat leírása</th><th>Órák</th></tr></thead>
+        <tbody>
+          <tr><td>2025-10-16</td><td>(Kóró Marcell József)</td><td>Vízió vázlat, funkciók priorizálása</td><td>2</td></tr>
+          <tr><td>2025-10-17</td><td>(Kóró Marcell József)</td><td>Probléma & piaci pozíció fejezetek</td><td>1.5</td></tr>
+          <tr><td>2025-10-18</td><td>(Kóró Marcell József)</td><td>Szótár & NFR kidolgozása</td><td>1.5</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer class="card">
+      Készült a Szoftvertechnológia tárgyhoz · IdőMester projekt · H2 dokumentum
+    </footer>
+
+  </div>
+</body>
+</html>
