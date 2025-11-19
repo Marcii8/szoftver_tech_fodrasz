@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>H3 – SRS specifikáció | IdőMester – Fodrász Szalon</title>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    /* ugyanaz a CSS, mint az előzőben – rövidség kedvéért nem kommentálom újra,
+       simán másold át az Áttekintés fájlból, CSAK a title és főcím más */
+    :root{
+      --bg: #faf7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #e11d48;
+      --primary-weak: #fde2e7;
+      --accent: #f59e0b;
+      --border: #e7e2ea;
+      --radius-xl: 18px;
+      --radius: 14px;
+      --shadow: 0 18px 45px rgba(17,24,39,.08);
+      --shadow-soft: 0 12px 22px rgba(17,24,39,.04);
+    }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --bg: #0b0f14;
+        --card: #0e131b;
+        --text: #e5e7eb;
+        --muted: #9ca3af;
+        --primary: #fb7185;
+        --primary-weak: #331621;
+        --accent: #fbbf24;
+        --border: #1f2937;
+        --shadow: 0 18px 45px rgba(0,0,0,.45);
+        --shadow-soft: 0 12px 22px rgba(0,0,0,.35);
+      }
+    }
+    html,body{height:100%}
+    body{
+      margin:0; padding:2.8rem 1.2rem 3.2rem;
+      background: radial-gradient(1200px 800px at 10% -10%, rgba(255,255,255,.8), transparent 60%),
+                  radial-gradient(900px 700px at 120% 0%, color-mix(in srgb, var(--primary-weak) 45%, transparent), transparent 70%),
+                  var(--bg);
+      color: var(--text);
+      font: 16px/1.7 "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial;
+    }
+    .container{max-width: 1024px; margin:0 auto;}
+    nav.top{position:sticky; top:0; z-index:10; backdrop-filter:saturate(160%) blur(8px); background:color-mix(in srgb, var(--bg) 85%, transparent); border-bottom:1px solid var(--border); margin:-2.4rem -1.2rem 1.4rem; padding:.6rem 1.2rem;}
+    .top-row{display:flex; align-items:center; justify-content:space-between; gap:1rem;}
+    .brand{display:flex; align-items:center; gap:.7rem; font-weight:800}
+    .logo{width:40px; height:40px; border-radius:12px; isolation:isolate; background:conic-gradient(from 220deg, var(--primary), #a21caf, var(--accent)); display:grid; place-items:center; color:#fff; box-shadow:0 12px 22px rgba(225,29,72,.28); position:relative; font-size:1.1rem;}
+    .logo::after{content:"✂"; filter:drop-shadow(0 1px 1px rgba(0,0,0,.2))}
+    .top ul{list-style:none; display:flex; gap:.6rem; padding:0; margin:0; flex-wrap:wrap}
+    .top a.btn{display:inline-block; padding:.42rem .7rem; border-radius:999px; text-decoration:none; color:var(--text); border:1px solid var(--border); background:var(--card); box-shadow:var(--shadow-soft); font-size:.92rem;}
+    nav.toc{position:sticky; top:3.3rem; z-index:5; backdrop-filter:saturate(160%) blur(8px); background:color-mix(in srgb, var(--bg) 85%, transparent); border-bottom:1px solid var(--border); margin:0 -1.2rem 1.4rem; padding:.6rem 1.2rem;}
+    .toc ul{list-style:none; display:flex; gap:.6rem; padding:0; margin:0; flex-wrap:wrap}
+    .toc a{display:inline-block; padding:.38rem .7rem; border-radius:999px; text-decoration:none; color:var(--text); border:1px solid var(--border); background:var(--card); box-shadow:var(--shadow-soft); font-size:.9rem;}
+    header.hero{display:flex; gap:1.25rem; align-items:center; padding:1.4rem; border:1px solid var(--border); border-radius:var(--radius-xl); background:var(--card); box-shadow:var(--shadow); margin-bottom:1.2rem;}
+    .emblem{width:68px; height:68px; border-radius:20px; background:conic-gradient(from 220deg, var(--primary), #a21caf, var(--accent)); display:grid; place-items:center; color:#fff; font-weight:800; box-shadow:0 18px 28px rgba(225,29,72,.28); position:relative;}
+    .emblem::after{content:"H3"; font-variant-numeric:tabular-nums;}
+    h1{font-size:1.8rem; margin:.1rem 0 .2rem;}
+    .subtitle{color:var(--muted); margin:.2rem 0 0}
+    .meta{display:grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap:.6rem .9rem; margin-top:.6rem; font-size:.95rem;}
+    .meta b{color:var(--muted); font-weight:600; display:block}
+    section.card, footer.card{padding:1.2rem 1.2rem; border:1px solid var(--border); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow-soft); margin:1rem 0 1.1rem;}
+    section.card h2{font-size:1.15rem; margin:.1rem 0 .85rem; display:flex; align-items:center; gap:.55rem;}
+    section.card h2::before{content:""; width:10px; height:22px; border-radius:6px; background:linear-gradient(180deg, var(--primary), color-mix(in srgb, var(--primary) 45%, var(--accent)));}
+    h3{margin:.2rem 0 .4rem; font-size:1.02rem}
+    p{margin:.35rem 0 .8rem}
+    ul{margin:.2rem 0 .8rem; padding-left:1.15rem}
+    .muted{color:var(--muted)}
+    table{width:100%; border-collapse:collapse; overflow:hidden; border:1px solid var(--border); border-radius:14px; background:var(--card); font-size:.95rem;}
+    thead th{font-size:.86rem; text-transform:uppercase; letter-spacing:.04em; background:linear-gradient(180deg, color-mix(in srgb, var(--primary-weak) 72%, var(--card)), var(--card)); color:var(--text);}
+    th,td{padding:.7rem .8rem; border-bottom:1px solid var(--border); vertical-align:top}
+    tbody tr:nth-child(odd){background:color-mix(in srgb, var(--card) 92%, var(--bg))}
+    @media (max-width:900px){.meta{grid-template-columns: repeat(2,minmax(0,1fr));} nav.toc{top:3rem;}}
+    @media print{body{background:#fff; padding:0} nav.top,nav.toc{display:none} header.hero,section.card,footer.card{box-shadow:none; border-color:#cfcfd4} a[href]::after{content:" (" attr(href) ")"; font-size:10px; color:#666} section.card{break-inside:avoid; page-break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <nav class="top">
+      <div class="top-row">
+        <div class="brand"><span class="logo" aria-hidden="true"></span> Szoftvertech · IdőMester</div>
+        <ul>
+          <li><a class="btn" href="index.html">Index</a></li>
+          <li><a class="btn" href="H1 fodrász.html">H1</a></li>
+          <li><a class="btn" href="H2 fodrász.html">H2</a></li>
+          <li><a class="btn" href="H3-attekintes.html">H3 – Áttekintés</a></li>
+          <li><a class="btn" href="H3-srs.html">H3 – SRS</a></li>
+          <li><a class="btn" href="H3-szotar.html">Szótár</a></li>
+          <li><a class="btn" href="H3-felhasznaloi.html">Felhasználói doksi</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <nav class="toc">
+      <ul>
+        <li><a href="#fr">Funkcionális kkövetelmények</a></li>
+        <li><a href="#nfr">Nem funkcionális</a></li>
+        <li><a href="#usecases">Use-case leírások</a></li>
+        <li><a href="#munkanaplo">Munkanapló</a></li>
+        <li><a href="#verziok">Verziók</a></li>
+      </ul>
+    </nav>
+
+    <header class="hero">
+      <div class="emblem" aria-hidden="true"></div>
+      <div>
+        <h1>H3 – SRS specifikáció</h1>
+        <p class="subtitle">Követelmények és use-case-ek az IdőMester rendszerhez</p>
+        <div class="meta">
+          <div><b>Projekt</b> IdőMester</div>
+          <div><b>Tantárgy</b> Szoftvertechnológia</div>
+          <div><b>Dátum</b> 2025. október</div>
+        </div>
+      </div>
+    </header>
+
+    <section class="card" id="fr">
+      <h2>4.1 Funkcionális követelmények (FR)</h2>
+      <table>
+        <thead>
+          <tr><th>Azonosító</th><th>Követelmény</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>FR1</td><td>A vendég választhat szolgáltatást.</td></tr>
+          <tr><td>FR2</td><td>A vendég kiválaszthatja az elérhető stylistot.</td></tr>
+          <tr><td>FR3</td><td>A vendég csak szabad időpontok közül választhat.</td></tr>
+          <tr><td>FR4</td><td>Új foglalás hozható létre ütközésmentesen.</td></tr>
+          <tr><td>FR5</td><td>A vendég vagy az admin lemondhat meglévő foglalást.</td></tr>
+          <tr><td>FR6</td><td>Admin új foglalást vihet fel a naptárba.</td></tr>
+          <tr><td>FR7</td><td>Admin módosíthat vagy törölhet foglalásokat.</td></tr>
+          <tr><td>FR8</td><td>Stylist megtekintheti saját napi/heti naptárnézetét.</td></tr>
+          <tr><td>FR9</td><td>Admin kezelheti a szolgáltatások listáját (név, időtartam, ár).</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="nfr">
+      <h2>4.2 Nem funkcionális követelmények (NFR)</h2>
+      <table>
+        <thead>
+          <tr><th>Típus</th><th>Követelmény</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Teljesítmény</td><td>API válaszidő fejlesztői környezetben ≤ 300ms egy tipikus kérésre.</td></tr>
+          <tr><td>Biztonság</td><td>Jelszavak hash-elve és sózva kerülnek tárolásra; szerepkör alapú hozzáférés.</td></tr>
+          <tr><td>Használhatóság</td><td>Mobilbarát, egyértelmű felület; konzisztens hibaüzenetek.</td></tr>
+          <tr><td>Karbantarthatóság</td><td>Moduláris backend struktúra, dokumentált funkciók, tesztek.</td></tr>
+          <tr><td>Megbízhatóság</td><td>Fejlesztői szinten cél a stabil, reprodukálható működés.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="usecases">
+      <h2>6. Use-case leírások</h2>
+
+      <h3>UC1 – Foglalás létrehozása</h3>
+      <p><strong>Szereplő:</strong> Vendég</p>
+      <p><strong>Cél:</strong> Új időpontfoglalás létrehozása egy fodrász szolgáltatásra.</p>
+      <p><strong>Alapfolyamat:</strong></p>
+      <ul>
+        <li>Vendég kiválasztja a szolgáltatást.</li>
+        <li>Vendég kiválaszt egy stylistot.</li>
+        <li>Vendég kiválaszt egy szabad időpontot.</li>
+        <li>A rendszer ellenőrzi az ütközéseket.</li>
+        <li>A rendszer elmenti a foglalást és visszajelzést ad.</li>
+      </ul>
+
+      <h3>UC2 – Foglalás lemondása</h3>
+      <p><strong>Szereplő:</strong> Vendég vagy Admin</p>
+      <p><strong>Cél:</strong> Meglévő foglalás törlése.</p>
+      <ul>
+        <li>Felhasználó kiválasztja a foglalást a listából.</li>
+        <li>A „Lemondás” gombra kattint.</li>
+        <li>A rendszer törli a foglalást és felszabadítja az időablakot.</li>
+      </ul>
+
+      <h3>UC3 – Admin új foglalást vesz fel</h3>
+      <ul>
+        <li>Admin megnyitja a naptár nézetet.</li>
+        <li>Kiválaszt egy stylistot és időablakot.</li>
+        <li>Megadja a vendég adatait és a szolgáltatást.</li>
+        <li>A rendszer ütközésellenőrzést végez és elmenti a foglalást.</li>
+      </ul>
+
+      <h3>UC4 – Stylist naptár megtekintése</h3>
+      <ul>
+        <li>Stylist bejelentkezik.</li>
+        <li>Megnyitja a „Naptáram” menüt.</li>
+        <li>A rendszer napi/heti nézetben megjeleníti a foglalásokat.</li>
+      </ul>
+    </section>
+
+    <section class="card" id="munkanaplo">
+      <h2>9. Munkanapló (sablon)</h2>
+      <p class="muted">A H3 specifikációs munkák követésére.</p>
+      <table>
+        <thead>
+          <tr><th>Dátum</th><th>Tag</th><th>Feladat</th><th>Idő (óra)</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>2025-10-21</td>
+            <td>Kóró Marcell József</td>
+            <td>Use-case leírások megírása</td>
+            <td>1.5</td>
+          </tr>
+          <tr>
+            <td>2025-10-22</td>
+            <td>Kóró Marcell József</td>
+            <td>NFR-ek rendezése</td>
+            <td>1.0</td>
+          </tr>
+          <tr>
+            <td>2025-10-23</td>
+            <td>Kóró Marcell József</td>
+            <td>Felhasználói kézikönyv v1 – vázlat</td>
+            <td>1.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card" id="verziok">
+      <h2>10. Verziók</h2>
+      <ul>
+        <li><strong>v1.0 (H3 – SRS)</strong> – Első teljes követelmény- és use-case specifikáció.</li>
+      </ul>
+    </section>
+
+    <footer class="card">
+      H3 – SRS specifikáció · IdőMester · Szoftvertechnológia
+    </footer>
+
+  </div>
+</body>
+</html>
